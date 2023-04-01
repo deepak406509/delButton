@@ -1,0 +1,66 @@
+// get the table element and add a click event listener to it
+const userDataTable = document.getElementById("userDataTable");
+userDataTable.addEventListener("click", function(event) {
+  // check if the clicked element is a delete button
+  if (event.target.classList.contains("deleteBtn")) {
+    // get the ID of the user to be deleted
+    const userId = event.target.dataset.id;
+
+    // retrieve the existing user data from local storage
+    let userData = JSON.parse(localStorage.getItem("userData"));
+
+    // filter out the user with the matching ID
+    userData = userData.filter(function(user) {
+      return user.id !== userId;
+    });
+
+    // store the updated user data in local storage
+    localStorage.setItem("userData", JSON.stringify(userData));
+
+    // remove the deleted row from the UI
+    event.target.parentElement.parentElement.remove();
+  }
+});
+
+// get the save button element
+const saveBtn = document.getElementById("saveBtn");
+
+// add a click event listener to the save button
+saveBtn.addEventListener("click", function() {
+
+  // get the user input values
+  const name = document.getElementById("name").value;
+  const email = document.getElementById("email").value;
+  const phone = document.getElementById("phone").value;
+
+  // retrieve the existing user data from local storage
+  let userData = JSON.parse(localStorage.getItem("userData"));
+
+  // if there is no existing data, create a new array to store the user data
+  if (!userData) {
+    userData = [];
+  }
+
+  // generate a unique ID for the new user
+  const userId = Date.now().toString();
+
+  // add the new user data to the array
+  userData.push({
+    id: userId,
+    name: name,
+    email: email,
+    phone: phone
+  });
+
+  // store the updated user data in local storage
+  localStorage.setItem("userData", JSON.stringify(userData));
+
+  // create a new row in the table to display the new user data
+  const newRow = userDataTable.insertRow();
+  newRow.innerHTML = `
+    <td>${name}</td>
+    <td>${email}</td>
+    <td>${phone}</td>
+    <td><button class="deleteBtn" data-id="${userId}">Delete</button></td>
+  `;
+});
